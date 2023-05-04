@@ -55,13 +55,13 @@ PLUGIN_ENTRY_POINT = 'ovos-audio-transformer-plugin-speechbrain-voxlingua107fast
 setup(
     name='ovos-audio-transformer-plugin-speechbrain-voxlingua107',
     version=get_version(),
-    description='A fasterwhisper stt plugin for mycroft',
+    description='A speech lang detection plugin for mycroft',
     url='https://github.com/OpenVoiceOS/ovos-audio-transformer-plugin-speechbrain-voxlingua107',
     author='JarbasAi',
     author_email='jarbasai@mailfence.com',
     license='Apache-2.0',
     packages=['ovos_audio_transformer_plugin_speechbrain_voxlingua107'],
-    install_requires=required("requirements/requirements.txt"),
+    install_requires=required("requirements.txt"),
     zip_safe=True,
     classifiers=[
         'Development Status :: 3 - Alpha',
