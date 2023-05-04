@@ -2,8 +2,12 @@
 
 language detector for ovos
 
-```
+```javascript
 "listener": {
-    "audio_transformers": {"model": "speechbrain/lang-id-voxlingua107-ecapa"}
+    "audio_transformers": {
+        "ovos-audio-transformer-plugin-speechbrain-voxlingua107": {
+            "model": "speechbrain/lang-id-voxlingua107-ecapa"
+        }
+    }
 }
 ```
