@@ -8,7 +8,7 @@ BASEDIR = os.path.abspath(os.path.dirname(__file__))
 def get_version():
     """ Find the version of the package"""
     version = None
-    version_file = os.path.join(BASEDIR, 'ovos_audio_transformer_plugin_speechbrain_voxlingua107', 'version.py')
+    version_file = os.path.join(BASEDIR, 'ovos_audio_transformer_plugin_speechbrain_langdetect', 'version.py')
     major, minor, build, alpha = (None, None, None, None)
     with open(version_file) as f:
         for line in f:
@@ -49,18 +49,18 @@ def required(requirements_file):
                 if pkg.strip() and not pkg.startswith("#")]
 
 
-PLUGIN_ENTRY_POINT = 'ovos-audio-transformer-plugin-speechbrain-voxlingua107fasterwhisper = ovos_audio_transformer_plugin_speechbrain_voxlingua107:SpeechBrainVoxLingua107LangClassifier'
+PLUGIN_ENTRY_POINT = 'ovos-audio-transformer-plugin-speechbrain-langdetect = ovos_audio_transformer_plugin_speechbrain_langdetect:SpeechBrainLangClassifier'
 
 
 setup(
-    name='ovos-audio-transformer-plugin-speechbrain-voxlingua107',
+    name='ovos-audio-transformer-plugin-speechbrain-langdetect',
     version=get_version(),
     description='A speech lang detection plugin for mycroft',
-    url='https://github.com/OpenVoiceOS/ovos-audio-transformer-plugin-speechbrain-voxlingua107',
+    url='https://github.com/OpenVoiceOS/ovos-audio-transformer-plugin-speechbrain-langdetect',
     author='JarbasAi',
     author_email='jarbasai@mailfence.com',
     license='Apache-2.0',
-    packages=['ovos_audio_transformer_plugin_speechbrain_voxlingua107'],
+    packages=['ovos_audio_transformer_plugin_speechbrain_langdetect'],
     install_requires=required("requirements.txt"),
     zip_safe=True,
     classifiers=[

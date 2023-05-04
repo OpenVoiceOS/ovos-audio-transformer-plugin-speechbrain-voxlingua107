@@ -1,20 +1,19 @@
 # this is needed to read the WAV file properly
 import numpy as np
 import torch
-import torchaudio
+
 from ovos_plugin_manager.templates.stt import STT
 from ovos_plugin_manager.templates.transformers import AudioTransformer
 from ovos_utils.log import LOG
 from ovos_utils.xdg_utils import xdg_data_home
-from speech_recognition import AudioData
 from speechbrain.pretrained import EncoderClassifier
 
 
-class SpeechBrainVoxLingua107LangClassifier(AudioTransformer):
+class SpeechBrainLangClassifier(AudioTransformer):
     def __init__(self, config=None):
         config = config or {}
-        super().__init__("ovos-audio-transformer-plugin-speechbrain-voxlingua107", 10, config)
-        model = self.config.get("model") or "speechbrain/lang-id-voxlingua107-ecapa"
+        super().__init__("ovos-audio-transformer-plugin-speechbrain-langdetect", 10, config)
+        model = self.config.get("model") or "speechbrain/lang-id-commonlanguage_ecapa"
         if self.config.get("use_cuda"):
             self.engine = EncoderClassifier.from_hparams(source=model, savedir=f"{xdg_data_home()}/speechbrain",
                                                          run_opts={"device": "cuda"})
@@ -46,12 +45,12 @@ class SpeechBrainVoxLingua107LangClassifier(AudioTransformer):
 
 
 if __name__ == "__main__":
-    from speech_recognition import Recognizer, AudioFile
+    from speech_recognition import Recognizer, AudioFile, AudioData
 
-    jfk = "/home/miro/PycharmProjects/ovos-audio-transformer-plugin-speechbrain-voxlingua107/jfk.wav"
+    jfk = "/home/miro/PycharmProjects/ovos-stt-plugin-fasterwhisper/jfk.wav"
     with AudioFile(jfk) as source:
         audio = Recognizer().record(source)
 
-    s = SpeechBrainVoxLingua107LangClassifier()
+    s = SpeechBrainLangClassifier()
     s.transform(audio.get_wav_data())
     # {'stt_lang': 'en', 'lang_probability': 0.8076384663581848}
