@@ -31,6 +31,15 @@ class SpeechBrainLangClassifier(AudioTransformer):
         data = audio_as_np_float32 / max_int16
         return torch.from_numpy(data).float()
 
+    def signal2probs(self, signal):
+        probs, _, _, _ = self.engine.classify_batch(signal)
+        probs = torch.softmax(probs[0], dim=0)
+        labels = self.engine.hparams.label_encoder.decode_ndim(range(len(probs)))
+        results = {}
+        for prob, label in sorted(zip(probs, labels), reverse=True):
+            results[label.split(":")[0]] = prob.item()
+        return results
+    
     # plugin api
     def transform(self, audio_data):
         # Download Thai language sample from Omniglot and cvert to suitable form
