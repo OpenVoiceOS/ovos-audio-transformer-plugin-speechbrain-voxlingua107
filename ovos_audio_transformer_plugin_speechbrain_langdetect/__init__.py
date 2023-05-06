@@ -1,8 +1,7 @@
-# this is needed to read the WAV file properly
 import numpy as np
 import torch
 
-from ovos_plugin_manager.templates.stt import STT
+from ovos_bus_client.session import SessionManager
 from ovos_plugin_manager.templates.transformers import AudioTransformer
 from ovos_utils.log import LOG
 from ovos_utils.xdg_utils import xdg_data_home
@@ -39,22 +38,24 @@ class SpeechBrainLangClassifier(AudioTransformer):
         for prob, label in sorted(zip(probs, labels), reverse=True):
             results[label.split(":")[0]] = prob.item()
         return results
-    
+
     # plugin api
     def transform(self, audio_data):
-        # Download Thai language sample from Omniglot and cvert to suitable form
         signal = self.audiochunk2array(audio_data)
-        prediction = self.engine.classify_batch(signal)
 
-        prob = prediction[1].exp()[0].item()
-        lang = prediction[3][0]
+        # list of lang codes for this request from bus message/config
+        s = SessionManager.get()
+        valid = [l.split("-")[0] for l in s.valid_languages]
 
+        probs = self.signal2probs(signal)
+        probs = [(k, v) for k, v in probs.items() if k in valid]
+        lang, prob = max(probs, key=lambda k: k[1])
         LOG.info(f"Detected speech language '{lang}' with probability {prob}")
         return audio_data, {"stt_lang": lang.split(":")[0], "lang_probability": prob}
 
 
 if __name__ == "__main__":
-    from speech_recognition import Recognizer, AudioFile, AudioData
+    from speech_recognition import Recognizer, AudioFile
 
     jfk = "/home/miro/PycharmProjects/ovos-stt-plugin-fasterwhisper/jfk.wav"
     with AudioFile(jfk) as source:
