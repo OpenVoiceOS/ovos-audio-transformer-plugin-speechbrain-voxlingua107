@@ -56,7 +56,9 @@ class SpeechBrainLangClassifier(AudioTransformer):
         probs = [(k, v/total) for k, v in probs]
         lang, prob = max(probs, key=lambda k: k[1])
         LOG.info(f"Detected speech language '{lang}' with probability {prob}")
-        return audio_data, {"stt_lang": lang.split(":")[0], "lang_probability": prob}
+        return audio_data, {"stt_lang": lang.split(":")[0],
+                            "lang_probability": prob,
+                            "lang_predictions": probs}
 
 
 if __name__ == "__main__":
@@ -67,5 +69,6 @@ if __name__ == "__main__":
         audio = Recognizer().record(source)
 
     s = SpeechBrainLangClassifier()
-    s.transform(audio.get_wav_data())
+    _, ctxt = s.transform(audio.get_wav_data())
+    print(ctxt)
     # {'stt_lang': 'en', 'lang_probability': 0.8076384663581848}
