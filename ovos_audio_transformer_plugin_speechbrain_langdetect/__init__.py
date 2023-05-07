@@ -46,9 +46,14 @@ class SpeechBrainLangClassifier(AudioTransformer):
         # list of lang codes for this request from bus message/config
         s = SessionManager.get()
         valid = [l.split("-")[0] for l in s.valid_languages]
+        if len(valid) == 1:
+            # no classification needed
+            return audio_data, {}
 
         probs = self.signal2probs(signal)
         probs = [(k, v) for k, v in probs.items() if k in valid]
+        total = sum(p[1] for p in probs) or 1
+        probs = [(k, v/total) for k, v in probs]
         lang, prob = max(probs, key=lambda k: k[1])
         LOG.info(f"Detected speech language '{lang}' with probability {prob}")
         return audio_data, {"stt_lang": lang.split(":")[0], "lang_probability": prob}
