@@ -1,7 +1,8 @@
 import numpy as np
 import torch
-
 from ovos_bus_client.session import SessionManager
+from ovos_config.config import Configuration
+from ovos_config.locale import get_default_lang
 from ovos_plugin_manager.templates.transformers import AudioTransformer
 from ovos_utils.log import LOG
 from ovos_utils.xdg_utils import xdg_data_home
@@ -18,6 +19,11 @@ class SpeechBrainLangClassifier(AudioTransformer):
                                                          run_opts={"device": "cuda"})
         else:
             self.engine = EncoderClassifier.from_hparams(source=model, savedir=f"{xdg_data_home()}/speechbrain")
+
+    @property
+    def valid_langs(self) -> List[str]:
+        return list(set([get_default_lang()] +
+                        Configuration().get("secondary_langs", [])))
 
     @staticmethod
     def audiochunk2array(audio_data):
@@ -43,9 +49,7 @@ class SpeechBrainLangClassifier(AudioTransformer):
     def transform(self, audio_data):
         signal = self.audiochunk2array(audio_data)
 
-        # list of lang codes for this request from bus message/config
-        s = SessionManager.get()
-        valid = [l.split("-")[0] for l in s.valid_languages]
+        valid = [l.split("-")[0] for l in self.valid_langs]
         if len(valid) == 1:
             # no classification needed
             return audio_data, {}
@@ -53,7 +57,7 @@ class SpeechBrainLangClassifier(AudioTransformer):
         probs = self.signal2probs(signal)
         probs = [(k, v) for k, v in probs.items() if k in valid]
         total = sum(p[1] for p in probs) or 1
-        probs = [(k, v/total) for k, v in probs]
+        probs = [(k, v / total) for k, v in probs]
         lang, prob = max(probs, key=lambda k: k[1])
         LOG.info(f"Detected speech language '{lang}' with probability {prob}")
         return audio_data, {"stt_lang": lang.split(":")[0],
