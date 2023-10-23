@@ -1,6 +1,7 @@
+from typing import List
+
 import numpy as np
 import torch
-from ovos_bus_client.session import SessionManager
 from ovos_config.config import Configuration
 from ovos_config.locale import get_default_lang
 from ovos_plugin_manager.templates.transformers import AudioTransformer
