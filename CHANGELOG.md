@@ -1,8 +1,8 @@
 # Changelog
 
-## [Unreleased](https://github.com/OpenVoiceOS/ovos-audio-transformer-plugin-speechbrain-langdetect/tree/HEAD)
+## [V0.0.0a7](https://github.com/OpenVoiceOS/ovos-audio-transformer-plugin-speechbrain-langdetect/tree/V0.0.0a7) (2023-10-23)
 
-[Full Changelog](https://github.com/OpenVoiceOS/ovos-audio-transformer-plugin-speechbrain-langdetect/compare/V0.0.0a6...HEAD)
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-audio-transformer-plugin-speechbrain-langdetect/compare/V0.0.0a6...V0.0.0a7)
 
 **Fixed bugs:**
 
