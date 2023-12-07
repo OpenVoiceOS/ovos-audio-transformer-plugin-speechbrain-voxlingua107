@@ -3,7 +3,7 @@ from typing import List
 import numpy as np
 import torch
 from ovos_config.config import Configuration
-from ovos_config.locale import get_default_lang
+from ovos_config.locale import get_default_lang, get_valid_languages
 from ovos_plugin_manager.templates.transformers import AudioTransformer
 from ovos_utils.log import LOG
 from ovos_utils.xdg_utils import xdg_data_home
@@ -20,11 +20,6 @@ class SpeechBrainLangClassifier(AudioTransformer):
                                                          run_opts={"device": "cuda"})
         else:
             self.engine = EncoderClassifier.from_hparams(source=model, savedir=f"{xdg_data_home()}/speechbrain")
-
-    @property
-    def valid_langs(self) -> List[str]:
-        return list(set([get_default_lang()] +
-                        Configuration().get("secondary_langs", [])))
 
     @staticmethod
     def audiochunk2array(audio_data):
@@ -44,19 +39,71 @@ class SpeechBrainLangClassifier(AudioTransformer):
         results = {}
         for prob, label in sorted(zip(probs, labels), reverse=True):
             results[label.split(":")[0]] = prob.item()
-        return results
+
+        # the labels are the language name in english, map to lang-codes
+        langmap = {'Arabic': 'ar-SA',
+                   'Basque': 'eu-ES',
+                   'Breton': 'br-FR',
+                   'Catalan': 'ca-ES',
+                   'Chinese_China': 'zh-CN',
+                   'Chinese_Hongkong': 'zh-HK',
+                   'Chinese_Taiwan': 'zh-TW',
+                   'Chuvash': 'cv-RU',
+                   'Czech': 'cs-CZ',
+                   'Dhivehi': 'dv-MV',
+                   'Dutch': 'nl-NL',
+                   'English': 'en-US',
+                   'Esperanto': 'eo',
+                   'Estonian': 'et-EE',
+                   'French': 'fr-FR',
+                   'Frisian': 'fy-NL',
+                   'Georgian': 'ka-GE',
+                   'German': 'de-DE',
+                   'Greek': 'el-GR',
+                   'Hakha_Chin': 'cnh',
+                   'Indonesian': 'id-ID',
+                   'Interlingua': 'ia',
+                   'Italian': 'it-IT',
+                   'Japanese': 'ja-JP',
+                   'Kabyle': 'kab-DZ',
+                   'Kinyarwanda': 'rw-RW',
+                   'Kyrgyz': 'ky-KG',
+                   'Latvian': 'lv-LV',
+                   'Maltese': 'mt-MT',
+                   'Mongolian': 'mn-MN',
+                   'Persian': 'fa-IR',
+                   'Polish': 'pl-PL',
+                   'Portuguese': 'pt-PT',
+                   'Romanian': 'ro-RO',
+                   'Romansh_Sursilvan': 'rm-Sursilvan',
+                   'Russian': 'ru-RU',
+                   'Sakha': 'sah-RU',
+                   'Slovenian': 'sl-SI',
+                   'Spanish': 'es-ES',
+                   'Swedish': 'sv-SE',
+                   'Tamil': 'ta-IN',
+                   'Tatar': 'tt-RU',
+                   'Turkish': 'tr-TR',
+                   'Ukrainian': 'uk-UA',
+                   'Welsh': 'cy-GB'}
+
+        return {langmap[k].lower(): v for k, v in results.items()}
 
     # plugin api
     def transform(self, audio_data):
         signal = self.audiochunk2array(audio_data)
 
-        valid = [l.split("-")[0] for l in self.valid_langs]
+        valid = get_valid_languages()
         if len(valid) == 1:
             # no classification needed
             return audio_data, {}
 
         probs = self.signal2probs(signal)
-        probs = [(k, v) for k, v in probs.items() if k in valid]
+
+        valid2 = [l.split("-")[0] for l in valid]
+        probs = [(k, v) for k, v in probs.items()
+                 if k.split("-")[0] in valid2]
+
         total = sum(p[1] for p in probs) or 1
         probs = [(k, v / total) for k, v in probs]
         lang, prob = max(probs, key=lambda k: k[1])
