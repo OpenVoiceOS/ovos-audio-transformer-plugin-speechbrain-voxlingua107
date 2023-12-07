@@ -1,2 +1,4 @@
 torchaudio
+torchvision
 speechbrain
+
