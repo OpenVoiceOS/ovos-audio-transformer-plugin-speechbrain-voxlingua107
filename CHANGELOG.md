@@ -1,5 +1,21 @@
 # Changelog
 
+## [Unreleased](https://github.com/OpenVoiceOS/ovos-audio-transformer-plugin-speechbrain-langdetect/tree/HEAD)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-audio-transformer-plugin-speechbrain-langdetect/compare/V0.0.0a9...HEAD)
+
+**Implemented enhancements:**
+
+- feat/lang\_detection\_plugin [\#5](https://github.com/OpenVoiceOS/ovos-audio-transformer-plugin-speechbrain-langdetect/pull/5) ([JarbasAl](https://github.com/JarbasAl))
+
+**Fixed bugs:**
+
+- ValueError: max\(\) arg is an empty sequence [\#4](https://github.com/OpenVoiceOS/ovos-audio-transformer-plugin-speechbrain-langdetect/issues/4)
+
+## [V0.0.0a9](https://github.com/OpenVoiceOS/ovos-audio-transformer-plugin-speechbrain-langdetect/tree/V0.0.0a9) (2023-12-07)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-audio-transformer-plugin-speechbrain-langdetect/compare/V0.0.0a8...V0.0.0a9)
+
 ## [V0.0.0a8](https://github.com/OpenVoiceOS/ovos-audio-transformer-plugin-speechbrain-langdetect/tree/V0.0.0a8) (2023-10-23)
 
 [Full Changelog](https://github.com/OpenVoiceOS/ovos-audio-transformer-plugin-speechbrain-langdetect/compare/V0.0.0a7...V0.0.0a8)
